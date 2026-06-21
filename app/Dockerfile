@@ -2,6 +2,8 @@ FROM rocker/r-ver:4.5.3
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libprotobuf-dev protobuf-compiler cmake \
+    libpq-dev \
+    libcurl4-openssl-dev \
   && rm -rf /var/lib/apt/lists/*
 
 RUN install2.r --error renv
