@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.6.0
+FROM rocker/r-ver:4.5.3
 
 RUN install2.r --error renv
 
