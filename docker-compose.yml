@@ -7,8 +7,19 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
       - OTEL_SERVICE_NAME=r-shiny
       - OTEL_TRACES_EXPORTER=otlp
+      - POSTGRES_HOST=postgres
     depends_on:
       - otel-collector
+      - postgres
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=shiny_events
+      - POSTGRES_USER=shiny
+      - POSTGRES_PASSWORD=shiny
+    ports:
+      - "5432:5432"
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest

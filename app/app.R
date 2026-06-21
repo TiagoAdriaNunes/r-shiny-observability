@@ -1,8 +1,36 @@
 library(shiny)
 library(bslib)
 library(otelsdk)
+library(DBI)
+library(RPostgres)
 
 message("OTel tracing enabled: ", otel::is_tracing_enabled())
+
+.db <- tryCatch(
+  DBI::dbConnect(RPostgres::Postgres(),
+    host = Sys.getenv("POSTGRES_HOST", "postgres"),
+    dbname = "shiny_events", user = "shiny", password = "shiny"
+  ),
+  error = function(e) { message("[db] connect failed: ", e$message); NULL }
+)
+
+if (!is.null(.db)) {
+  DBI::dbExecute(.db, "CREATE TABLE IF NOT EXISTS events (
+    id SERIAL PRIMARY KEY,
+    event_type TEXT,
+    session_id TEXT,
+    created_at TIMESTAMPTZ DEFAULT now()
+  )")
+}
+
+log_event <- function(event_type, session_id) {
+  if (is.null(.db)) return(invisible(NULL))
+  tryCatch(
+    DBI::dbExecute(.db, "INSERT INTO events (event_type, session_id) VALUES ($1, $2)",
+      list(event_type, session_id)),
+    error = function(e) message("[db] insert failed: ", e$message)
+  )
+}
 
 # ---- Shared metrics state ----
 .m <- new.env(parent = emptyenv())
@@ -62,6 +90,7 @@ server <- function(input, output, session) {
   .m$sessions_active <- .m$sessions_active + 1L
   otel::counter_add(.instr$sessions_total, 1L)
   otel::up_down_counter_add(.instr$sessions_active, 1L)
+  log_event("session_start", session$token)
   onSessionEnded(function() {
     .m$sessions_active <- .m$sessions_active - 1L
     otel::up_down_counter_add(.instr$sessions_active, -1L)
@@ -82,7 +111,12 @@ server <- function(input, output, session) {
   observeEvent(input$error_btn, {
     .m$errors_total <- .m$errors_total + 1L
     otel::counter_add(.instr$errors_total, 1L)
+    log_event("error_triggered", session$token)
     showNotification("Error triggered and counted!", type = "error")
+  })
+
+  observeEvent(input$dist, {
+    log_event("distribution_changed", session$token)
   })
 
   output$plot <- renderPlot({
