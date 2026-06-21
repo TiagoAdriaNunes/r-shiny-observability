@@ -88,19 +88,19 @@ ui <- page_sidebar(
 server <- function(input, output, session) {
   .m$sessions_total  <- .m$sessions_total  + 1L
   .m$sessions_active <- .m$sessions_active + 1L
-  otel::counter_add(.instr$sessions_total, 1L)
-  otel::up_down_counter_add(.instr$sessions_active, 1L)
+  .instr$sessions_total$add(1L)
+  .instr$sessions_active$add(1L)
   log_event("session_start", session$token)
   onSessionEnded(function() {
     .m$sessions_active <- .m$sessions_active - 1L
-    otel::up_down_counter_add(.instr$sessions_active, -1L)
+    .instr$sessions_active$add(-1L)
   })
 
   tick <- reactiveTimer(2000)
 
   data_r <- reactive({
     .m$requests_total <- .m$requests_total + 1L
-    otel::counter_add(.instr$requests_total, 1L)
+    .instr$requests_total$add(1L)
     switch(input$dist,
       norm = rnorm(input$n),
       unif = runif(input$n),
@@ -110,7 +110,7 @@ server <- function(input, output, session) {
 
   observeEvent(input$error_btn, {
     .m$errors_total <- .m$errors_total + 1L
-    otel::counter_add(.instr$errors_total, 1L)
+    .instr$errors_total$add(1L)
     log_event("error_triggered", session$token)
     showNotification("Error triggered and counted!", type = "error")
   })
