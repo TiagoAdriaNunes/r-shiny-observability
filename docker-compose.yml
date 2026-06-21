@@ -5,6 +5,8 @@ services:
       - "3838:3838"
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_SERVICE_NAME=r-shiny
+      - OTEL_TRACES_EXPORTER=otlp
     depends_on:
       - otel-collector
 

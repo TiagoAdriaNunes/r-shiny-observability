@@ -1,6 +1,6 @@
 FROM rocker/r-ver:4.4.0
 
-RUN install2.r --error shiny bslib httr2 later
+RUN install2.r --error shiny bslib otel otelsdk
 
 COPY app.R /app/app.R
 
