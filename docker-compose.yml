@@ -58,7 +58,7 @@ services:
       - "16686:16686"   # Jaeger UI
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:11.4.0
     ports:
       - "3000:3000"
     environment:
