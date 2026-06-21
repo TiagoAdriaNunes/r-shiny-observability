@@ -1,0 +1,89 @@
+{
+  "title": "R Shiny Observability",
+  "uid": "shiny-obs",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Active Sessions",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "shiny_sessions_active", "refId": "A" }],
+      "options": { "colorMode": "background", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "green" }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Total Sessions",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "shiny_sessions_total", "refId": "A" }],
+      "options": { "colorMode": "background", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "blue" }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Reactive Calls",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "shiny_requests_total", "refId": "A" }],
+      "options": { "colorMode": "background", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "purple" }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Errors",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "shiny_errors_total", "refId": "A" }],
+      "options": { "colorMode": "background", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "red" }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Sessions & Activity Over Time",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "shiny_sessions_active",
+          "legendFormat": "Active Sessions",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(shiny_requests_total[1m])",
+          "legendFormat": "Reactive calls/s",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(shiny_errors_total[1m])",
+          "legendFormat": "Errors/s",
+          "refId": "C"
+        }
+      ]
+    }
+  ]
+}
