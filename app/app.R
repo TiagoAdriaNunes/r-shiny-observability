@@ -42,13 +42,13 @@ log_event <- function(event_type, session_id) {
 # ---- OTel metrics instruments ----
 .meter <- otel::get_meter("shiny.instrumentation")
 .instr <- list(
-  sessions_total  = .meter$counter("shiny_sessions_total",
+  sessions_total  = .meter$create_counter("shiny_sessions_total",
                       description = "Total Shiny sessions"),
-  sessions_active = .meter$up_down_counter("shiny_sessions_active",
+  sessions_active = .meter$create_up_down_counter("shiny_sessions_active",
                       description = "Active Shiny sessions"),
-  requests_total  = .meter$counter("shiny_requests_total",
+  requests_total  = .meter$create_counter("shiny_requests_total",
                       description = "Total reactive computations"),
-  errors_total    = .meter$counter("shiny_errors_total",
+  errors_total    = .meter$create_counter("shiny_errors_total",
                       description = "Total errors triggered")
 )
 
