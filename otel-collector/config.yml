@@ -11,11 +11,19 @@ exporters:
     endpoint: "0.0.0.0:8889"
     namespace: otel
 
+  otlp/jaeger:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+
   debug:
     verbosity: basic
 
 service:
   pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [otlp/jaeger, debug]
     metrics:
       receivers: [otlp]
       exporters: [prometheus, debug]
