@@ -1,8 +1,17 @@
 FROM rocker/r-ver:4.6.0
 
-RUN install2.r --error shiny bslib otel otelsdk DBI RPostgres
+RUN install2.r --error renv
 
-COPY app.R /app/app.R
+WORKDIR /app
+
+# Copy renv files first - layer is cached until lock changes
+COPY renv.lock .Rprofile ./
+COPY renv/activate.R renv/activate.R
+COPY renv/settings.json renv/settings.json
+
+RUN Rscript -e "renv::restore(prompt = FALSE)"
+
+COPY app.R app.R
 
 EXPOSE 3838
 
