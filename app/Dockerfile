@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.4.0
+FROM rocker/r-ver:4.6.0
 
 RUN install2.r --error shiny bslib otel otelsdk DBI RPostgres
 
