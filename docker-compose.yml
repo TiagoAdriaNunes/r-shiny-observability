@@ -29,6 +29,11 @@ services:
     depends_on:
       - otel-collector
 
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"   # Jaeger UI
+
   grafana:
     image: grafana/grafana:latest
     ports:
