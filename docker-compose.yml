@@ -7,6 +7,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
       - OTEL_SERVICE_NAME=r-shiny
       - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=otlp
       - POSTGRES_HOST=postgres
     depends_on:
       - otel-collector
